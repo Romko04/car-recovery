@@ -1,0 +1,177 @@
+/*Обнулення*/
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+font,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: transparent;
+}
+
+@font-face {
+  font-family: "";
+  font-weight: 700;
+  font-style: normal;
+  src: url("") format("woff2");
+}
+
+:root {
+  --font-family: "", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: calc(100vw / 1920 * 10);
+}
+
+@media (max-width: 991.98px) {
+  html {
+    font-size: calc(100vw / 375 * 10);
+  }
+}
+
+a {
+  text-decoration: none;
+}
+
+body {
+  line-height: 1;
+}
+
+.body--lock {
+  overflow: hidden;
+}
+
+.wrapper {
+  position: relative;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1 1 auto;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+blockquote,
+q {
+  quotes: none;
+}
+
+:focus {
+  outline: 0;
+}
+
+ins {
+  text-decoration: none;
+}
+
+del {
+  text-decoration: line-through;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.scroll--block {
+  height: 100%;
+  overflow-y: scroll;
+  position: fixed;
+  width: 100%;
+}
+
+.container {
+  max-width: 150rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  position: relative;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+img {
+  max-width: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (max-width: 991.98px) {
+}
+
+@media (min-width: 991.98px) {
+}
