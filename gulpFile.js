@@ -1,4 +1,4 @@
-const { src, dest, series, parallel, watch } = require("gulp");
+const { src, dest, series, parallel, watch, lastRun } = require("gulp");
 const cssnano = require("gulp-cssnano");
 const uglify = require("gulp-uglify");
 const browserSync = require("browser-sync").create();
@@ -31,26 +31,35 @@ function scripts() {
 
 // Конвертація шрифтів
 function fonts() {
-  return src("src/fonts/*.ttf") // Беремо тільки TTF
-    .pipe(fonter({ formats: ["woff"] })) // Конвертуємо в WOFF
-    .pipe(dest("dist/fonts")) // Зберігаємо WOFF
-    .pipe(src("src/fonts/*.ttf")) // Знову беремо TTF (оригінал)
-    .pipe(ttf2woff2()) // Конвертуємо в WOFF2
-    .pipe(dest("dist/fonts")); // Зберігаємо WOFF2
+  return src("src/fonts/*.ttf", { since: lastRun(fonts) }) // Виключаємо повторну генерацію
+    .pipe(fonter({ formats: ["woff"] }))
+    .pipe(dest("dist/fonts"))
+    .pipe(src("src/fonts/*.ttf", { since: lastRun(fonts) }))
+    .pipe(ttf2woff2())
+    .pipe(dest("dist/fonts"));
 }
+
+function copyCssLibs() {
+  return src(["node_modules/swiper/swiper-bundle.min.css"]).pipe(dest("dist/css/libs"));
+}
+
 // Копіювання бібліотек
 function copyLibs() {
-  return src([
-    "node_modules/swiper/swiper-bundle.min.js",
-    "node_modules/gsap/dist/gsap.min.js",
-    "node_modules/scrolltrigger/scrolltrigger-umd.js",
-    "node_modules/lenis/dist/lenis.min.js",
-  ]).pipe(dest("dist/js/libs"));
+  return src(["node_modules/swiper/swiper-bundle.min.js"]).pipe(dest("dist/js/libs"));
+}
+
+// Копіювання відео
+function copyVideos() {
+  return src("src/videos/**/*.*").pipe(dest("dist/videos"));
 }
 
 // Конвертація зображень
 function images() {
-  return src(["src/images/*.*"], { encoding: false }).pipe(imagemin()).pipe(webp()).pipe(dest("dist/images/"));
+  // Обробка всіх зображень, крім SVG, з конвертацією у WebP
+  src(["src/images/*.{png,jpg,jpeg,gif}"], { encoding: false }).pipe(webp()).pipe(dest("dist/images/"));
+
+  // Копіювання SVG без змін
+  return src("src/images/*.svg").pipe(dest("dist/images/"));
 }
 
 // HTML-компоненти
@@ -62,7 +71,7 @@ function components() {
 
 // Очищення dist перед новим білдом
 function clean() {
-  return deleteAsync(["dist"]);
+  return deleteAsync(["dist/**", "!dist/fonts", "!dist/fonts/**"]);
 }
 
 // Сервер для розробки
@@ -72,20 +81,24 @@ function serve() {
     open: true,
   });
 
-  watch("src/**/*.html", series(components, injectFiles, reload));
-  watch("src/css/**/*.css", series(styles, reload));
+  watch("src/**/*.html", series(components, injectFiles, replaceImageExtensionsInCSS, replaceImageExtensions, reload));
+  watch("src/css/**/*.css", series(styles, replaceImageExtensionsInCSS, reload));
   watch("src/js/**/*.js", series(scripts, reload));
   watch("src/images/**/*.{jpg,png}", series(images, reload));
   watch("src/fonts/*.ttf", series(fonts, reload));
+  watch("src/videos/**/*.*", series(copyVideos, reload));
 }
 
 // **Автоматичне підключення скриптів та стилів**
 function injectFiles() {
   return src("dist/*.html")
     .pipe(
-      inject(src(["dist/css/style.css", "dist/js/libs/*.js", "dist/js/main.js"], { read: false }), {
-        relative: true,
-      })
+      inject(
+        src(["dist/css/libs/*.css", "dist/css/style.css", "dist/js/libs/*.js", "dist/js/main.js"], { read: false }),
+        {
+          relative: true,
+        }
+      )
     )
     .pipe(dest("dist"));
 }
@@ -109,7 +122,6 @@ function replaceImageExtensions() {
   return src("dist/*.html")
     .pipe(
       replace(/src="([^"]+\.(jpg|png))"/g, (match, p1) => {
-        // Замінюємо jpg або png на webp
         return `src="${p1.replace(/\.(jpg|png)$/, ".webp")}"`;
       })
     )
@@ -121,17 +133,18 @@ function replaceImageExtensionsInCSS() {
   return src("dist/css/*.css")
     .pipe(
       replace(/url\(["']?([^"']+\.(jpg|png))["']?\)/g, (match, p1) => {
-        // Замінюємо jpg або png на webp
         return `url("${p1.replace(/\.(jpg|png)$/, ".webp")}")`;
       })
     )
     .pipe(dest("dist/css"));
 }
 
+exports.fonts = fonts;
+
 // Запуск у режимі розробки
 exports.dev = series(
   clean,
-  parallel(styles, scripts, copyLibs, images, components, fonts),
+  parallel(styles, scripts, copyLibs, copyCssLibs, images, components, copyVideos),
   injectFiles,
   replaceImageExtensions,
   replaceImageExtensionsInCSS,
@@ -141,7 +154,7 @@ exports.dev = series(
 // Білд для продакшену
 exports.build = series(
   clean,
-  parallel(styles, scripts, copyLibs, images, components, fonts),
+  parallel(styles, scripts, copyLibs, copyCssLibs, images, components, fonts, copyVideos),
   injectFiles,
   replaceImageExtensions,
   replaceImageExtensionsInCSS,
