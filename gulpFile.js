@@ -84,7 +84,7 @@ function serve() {
   watch("src/**/*.html", series(components, injectFiles, replaceImageExtensionsInCSS, replaceImageExtensions, reload));
   watch("src/css/**/*.css", series(styles, replaceImageExtensionsInCSS, reload));
   watch("src/js/**/*.js", series(scripts, reload));
-  watch("src/images/**/*.{jpg,png}", series(images, reload));
+  watch("src/images/**/*.{jpg,png, svg}", series(images, reload));
   watch("src/fonts/*.ttf", series(fonts, reload));
   watch("src/videos/**/*.*", series(copyVideos, reload));
 }
