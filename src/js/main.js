@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     toggleMenu() {
-      e.target.closest(".header__burger").classList.toggle("active");
+      document.querySelector(".header__burger").classList.toggle("active");
       document.querySelector("header .menu__body").classList.toggle("active");
       document.body.classList.toggle("body--lock");
     }

@@ -33,10 +33,10 @@ function scripts() {
 function fonts() {
   return src("src/fonts/*.ttf", { since: lastRun(fonts) }) // Виключаємо повторну генерацію
     .pipe(fonter({ formats: ["woff"] }))
-    .pipe(dest("dist/fonts"))
+    .pipe(dest(isProd ? "build/fonts" : "dist/fonts"))
     .pipe(src("src/fonts/*.ttf", { since: lastRun(fonts) }))
     .pipe(ttf2woff2())
-    .pipe(dest("dist/fonts"));
+    .pipe(dest(isProd ? "build/fonts" : "dist/fonts"));
 }
 
 function copyCssLibs() {
@@ -139,6 +139,42 @@ function replaceImageExtensionsInCSS() {
     .pipe(dest("dist/css"));
 }
 
+function copyLibsBuild() {
+  return src(["node_modules/swiper/swiper-bundle.min.js"]).pipe(dest("build/js/libs"));
+}
+
+function copyCssLibsBuild() {
+  return src(["node_modules/swiper/swiper-bundle.min.css"]).pipe(dest("build/css/libs"));
+}
+
+function imagesBuild() {
+  src(["src/images/*.{png,jpg,jpeg,gif}"]).pipe(webp()).pipe(dest("build/images/"));
+  return src("src/images/*.svg").pipe(dest("build/images/"));
+}
+
+function copyVideosBuild() {
+  return src("src/videos/**/*.*").pipe(dest("build/videos"));
+}
+
+function stylesBuild() {
+  return src("src/css/style.css").pipe(cleanCSS()).pipe(dest("build/css"));
+}
+function scriptsBuild() {
+  return src("src/js/*.js")
+    .pipe(isProd ? terser() : uglify())
+    .pipe(dest("build/js"));
+}
+function injectFilesBuild() {
+  return src("build/*.html")
+    .pipe(
+      inject(
+        src(["build/css/libs/*.css", "build/css/style.css", "build/js/libs/*.js", "build/js/main.js"], { read: false }),
+        { relative: true }
+      )
+    )
+    .pipe(dest("build"));
+}
+
 exports.fonts = fonts;
 
 // Запуск у режимі розробки
@@ -151,13 +187,34 @@ exports.dev = series(
   serve
 );
 
+function componentsBuild() {
+  return src("src/*.html")
+    .pipe(fileinclude({ prefix: "@@", basepath: "@file" }))
+    .pipe(dest("build/"));
+}
+
+function replaceImageExtensionsBuild() {
+  return src("build/*.html")
+    .pipe(replace(/src="([^"]+\.(jpg|png))"/g, (match, p1) => `src="${p1.replace(/\.(jpg|png)$/, ".webp")}"`))
+    .pipe(dest("build"));
+}
+
+function replaceImageExtensionsInCSSBuild() {
+  return src("build/css/*.css")
+    .pipe(
+      replace(/url\(["']?([^"']+\.(jpg|png))["']?\)/g, (match, p1) => `url("${p1.replace(/\.(jpg|png)$/, ".webp")}")`)
+    )
+    .pipe(dest("build/css"));
+}
+
 // Білд для продакшену
 exports.build = series(
-  clean,
-  parallel(styles, scripts, copyLibs, copyCssLibs, images, components, fonts, copyVideos),
-  injectFiles,
-  replaceImageExtensions,
-  replaceImageExtensionsInCSS,
   cleanBuild,
-  copyToBuild
+  clean,
+  fonts,
+  parallel(stylesBuild, scriptsBuild, copyLibsBuild, copyCssLibsBuild, imagesBuild, copyVideosBuild),
+  componentsBuild,
+  injectFilesBuild,
+  replaceImageExtensionsBuild,
+  replaceImageExtensionsInCSSBuild
 );
