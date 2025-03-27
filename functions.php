@@ -49,7 +49,7 @@ function eazycarsolutions_setup() {
 	// This theme uses wp_nav_menu() in one location.
 	register_nav_menus(
 		array(
-			'menu-1' => esc_html__( 'Primary', 'eazycarsolutions' ),
+			'header-1' => esc_html__( 'Header', 'eazycarsolutions' ),
 		)
 	);
 
@@ -138,14 +138,19 @@ add_action( 'widgets_init', 'eazycarsolutions_widgets_init' );
  * Enqueue scripts and styles.
  */
 function eazycarsolutions_scripts() {
-	wp_enqueue_style( 'eazycarsolutions-style', get_stylesheet_uri(), array(), _S_VERSION );
-	wp_style_add_data( 'eazycarsolutions-style', 'rtl', 'replace' );
+    // Підключення стилю з папки assets
+    wp_enqueue_style( 'swiper-style', get_template_directory_uri() . '/assets/css/libs/swiper-bundle.min.css', array(), _S_VERSION );
 
-	wp_enqueue_script( 'eazycarsolutions-navigation', get_template_directory_uri() . '/js/navigation.js', array(), _S_VERSION, true );
+    wp_enqueue_style( 'eazycarsolutions-style', get_template_directory_uri() . '/assets/css/style.css', array('swiper-style'), _S_VERSION );
 
-	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
-		wp_enqueue_script( 'comment-reply' );
-	}
+
+    // Підключення стилю для swiper з папки assets
+
+    // Підключення основного скрипту з папки assets
+    wp_enqueue_script( 'eazycarsolutions-main', get_template_directory_uri() . '/assets/js/main.js', array('swiper-script'), _S_VERSION, true );
+
+    // Підключення скрипту для swiper з папки assets
+    wp_enqueue_script( 'swiper-script', get_template_directory_uri() . '/assets/js/libs/swiper-bundle.min.js', array(), _S_VERSION, true );
 }
 add_action( 'wp_enqueue_scripts', 'eazycarsolutions_scripts' );
 
