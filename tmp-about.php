@@ -238,12 +238,12 @@ if ($reviews) :
 
 <section id="contact-form" class="promo">
     <div class="container promo__container">
-        <div class="promo__container-wrapper">
+        <div style="background: url(<?php echo esc_url(carbon_get_theme_option('promo_image') ); ?>) no-repeat center / cover;"
+            class="promo__container-wrapper">
             <div class="promo__image">
                 <img src="<?php echo carbon_get_theme_option('promo_image'); ?>" alt="Доставка щастя" />
             </div>
-            <div style="background: url(<?php echo esc_url(carbon_get_theme_option('promo_image') ); ?>) no-repeat center / cover;"
-                class="promo__content-wrapper">
+            <div class="promo__content-wrapper">
                 <div class="promo__content">
                     <div class="promo__title-wrapper">
                         <h2 class="promo__title"><?php echo carbon_get_theme_option('form_title'); ?></h2>
@@ -257,17 +257,9 @@ if ($reviews) :
                                 stroke="#22C55E" stroke-width="5.66734" />
                         </svg>
                     </div>
-                    <form class="promo__form form">
-                        <div class="form__group">
-                            <input type="text" class="form__input" placeholder="Ваше ім’я" />
-                        </div>
-                        <div class="form__group">
-                            <input type="tel" class="form__input" placeholder="Номер телефону" />
-                        </div>
-                        <div class="form__button-wrapper">
-                            <button class="form__button button" type="submit">Надіслати</button>
-                        </div>
-                    </form>
+                    <div class="promo__form form">
+                        <?php echo do_shortcode('[contact-form-7 id="b1f289c" title="Контактна форма"]'); ?>
+                    </div>
                 </div>
             </div>
         </div>

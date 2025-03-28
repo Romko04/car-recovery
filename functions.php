@@ -197,3 +197,76 @@ function crb_attach_theme_options() {
 	require get_template_directory() . '/inc/custom-fields/theme-meta.php';
 
 }
+
+remove_action('wp_head', '_wp_render_title_tag', 1);
+
+
+function eazycar_custom_meta_tags() {
+    // Для одиночних сторінок або сторінок, де є кастомні поля
+    if ( is_singular() || is_page() ) {
+        // Отримуємо поточний шаблон сторінки
+        $template = get_page_template_slug( get_queried_object_id() );
+
+        // Перевірка шаблону сторінки та вибір відповідних кастомних полів
+        if ( 'tmp-contacts.php' === $template ) {
+            $custom_title = carbon_get_the_post_meta('contacts_page_title' );
+            $custom_description = carbon_get_the_post_meta('contacts_page_description' );
+            $custom_url = get_permalink();
+        } elseif ( 'tmp-about.php' === $template ) {
+            $custom_title = carbon_get_the_post_meta('about_page_title' );
+            $custom_description = carbon_get_the_post_meta('about_page_description' );
+            $custom_url = get_permalink();
+        } elseif ( 'tmp-home.php' === $template ) {
+            $custom_title = carbon_get_the_post_meta('home_page_title' );
+            $custom_description = carbon_get_the_post_meta('home_page_description' );
+            $custom_url = get_permalink();
+        } else {
+            // Для інших сторінок або шаблонів
+            $custom_title = carbon_get_the_post_meta('home_page_title' );
+            $custom_description = carbon_get_the_post_meta('home_page_description' );
+            $custom_url = get_permalink();
+        }
+
+        // Виведення кастомного тайтлу
+        if ( !empty( $custom_title ) ) {
+            echo '<title>' . esc_html( $custom_title ) . '</title>';
+        } else {
+            echo '<title>' . get_bloginfo( 'name' ) . ' — Відновлення авто після ДТП | Київ</title>';
+        }
+
+        // Виведення кастомного дескрипшину
+        if ( !empty( $custom_description ) ) {
+            echo '<meta name="description" content="' . esc_attr( $custom_description ) . '">';
+        } else {
+            echo '<meta name="description" content="EazyCarSolutions надає послуги з відновлення автомобілів після ДТП у Києві. Повертаємо авто на дорогу швидко та якісно.">';
+        }
+
+        // Додавання Open Graph тегів
+        if ( !empty( $custom_title ) ) {
+            echo '<meta property="og:title" content="' . esc_attr( $custom_title ) . '">';
+        }
+
+        if ( !empty( $custom_description ) ) {
+            echo '<meta property="og:description" content="' . esc_attr( $custom_description ) . '">';
+        }
+
+        echo '<meta property="og:image" content="' . get_template_directory_uri() . '/assets/images/previe.png' . '">';
+
+        echo '<meta property="og:url" content="' . esc_url( $custom_url ) . '">';
+        echo '<meta property="og:type" content="website">';
+    } else {
+        // Для інших сторінок
+        echo '<title>' . get_bloginfo( 'name' ) . ' — Відновлення авто після ДТП | Київ</title>';
+        echo '<meta name="description" content="EazyCarSolutions надає послуги з відновлення автомобілів після ДТП у Києві. Якість, швидкість, прозорість.">';
+
+        // Open Graph для головної сторінки
+        echo '<meta property="og:title" content="' . get_bloginfo( 'name' ) . ' — Відновлення авто після ДТП | Київ">';
+        echo '<meta property="og:description" content="EazyCarSolutions надає послуги з відновлення автомобілів після ДТП у Києві. Якість, швидкість, прозорість.">';
+        echo '<meta property="og:url" content="' . esc_url( home_url() ) . '">';
+        echo '<meta property="og:type" content="website">';
+    }
+}
+
+
+// Додаємо екшн хук для вставки тайтлів та дескрипшінів в <head>
+add_action( 'wp_head', 'eazycar_custom_meta_tags', 1 );

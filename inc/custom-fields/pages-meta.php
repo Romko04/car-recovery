@@ -61,6 +61,10 @@ Container::make('post_meta', 'Настройки')
                 Field::make('image', 'portfolio_image', __('Зображення портфоліо'))
                     ->set_value_type('url'),
             )),
+    ))
+    ->add_tab(__('SEO налаштування'), array(
+        Field::make('text', 'home_page_title', __('Тайтл сторінки')),
+        Field::make('textarea', 'home_page_description', __('Дескрипшн сторінки')),
     ));
 
 
@@ -95,6 +99,10 @@ Container::make('post_meta', 'Настройки')
                 Field::make('text', 'benefit_title', __('Заголовок вигоди')),
                 Field::make('textarea', 'benefit_text', __('Текст вигоди')),
             )),
+    ))
+    ->add_tab(__('SEO налаштування'), array(
+        Field::make('text', 'about_page_title', __('Тайтл сторінки')),
+        Field::make('textarea', 'about_page_description', __('Дескрипшн сторінки')),
     ));
 
 
@@ -103,5 +111,8 @@ Container::make('post_meta', 'Настройки')
     ->add_fields(array(
         Field::make('image', 'contacts_image', 'Зображення')
     ->set_value_type('url')
+    ))
+    ->add_tab(__('SEO налаштування'), array(
+        Field::make('text', 'contacts_page_title', __('Тайтл сторінки')),
+        Field::make('textarea', 'contacts_page_description', __('Дескрипшн сторінки')),
     ));
-    

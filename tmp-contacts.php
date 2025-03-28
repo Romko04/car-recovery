@@ -101,17 +101,9 @@ get_header(); ?>
                                 stroke="#22C55E" stroke-width="5.66734" />
                         </svg>
                     </div>
-                    <form class="promo__form form">
-                        <div class="form__group">
-                            <input type="text" class="form__input" placeholder="Ваше ім’я" />
-                        </div>
-                        <div class="form__group">
-                            <input type="tel" class="form__input" placeholder="Номер телефону" />
-                        </div>
-                        <div class="form__button-wrapper">
-                            <button class="form__button button" type="submit">Надіслати</button>
-                        </div>
-                    </form>
+                    <div class="promo__form form">
+                        <?php echo do_shortcode('[contact-form-7 id="b1f289c" title="Контактна форма"]'); ?>
+                    </div>
                 </div>
             </div>
         </div>
