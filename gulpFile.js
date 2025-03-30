@@ -40,12 +40,24 @@ function fonts() {
 }
 
 function copyCssLibs() {
-  return src(["node_modules/swiper/swiper-bundle.min.css"]).pipe(dest("dist/css/libs"));
+  return src([
+    "node_modules/swiper/swiper-bundle.min.css",
+    "node_modules/intl-tel-input/build/css/intlTelInput.min.css",
+  ]).pipe(dest("dist/css/libs"));
+}
+
+function copyFlags() {
+  return src("node_modules/intl-tel-input/build/img/*").pipe(dest("dist/css/img"));
 }
 
 // Копіювання бібліотек
 function copyLibs() {
-  return src(["node_modules/swiper/swiper-bundle.min.js"]).pipe(dest("dist/js/libs"));
+  return src([
+    "node_modules/swiper/swiper-bundle.min.js",
+    "node_modules/intl-tel-input/build/js/intlTelInput.min.js",
+    "node_modules/intl-tel-input/build/js/intlTelInputWithUtils.min.js",
+    "node_modules/imask/dist/imask.min.js",
+  ]).pipe(dest("dist/js/libs"));
 }
 
 // Копіювання відео
@@ -140,7 +152,10 @@ function replaceImageExtensionsInCSS() {
 }
 
 function copyLibsBuild() {
-  return src(["node_modules/swiper/swiper-bundle.min.js"]).pipe(dest("build/js/libs"));
+  return src([
+    "node_modules/swiper/swiper-bundle.min.js",
+    "node_modules/intl-tel-input/build/js/intlTelInput.min.js",
+  ]).pipe(dest("build/js/libs"));
 }
 
 function copyCssLibsBuild() {
@@ -180,7 +195,7 @@ exports.fonts = fonts;
 // Запуск у режимі розробки
 exports.dev = series(
   clean,
-  parallel(styles, scripts, copyLibs, copyCssLibs, images, components, copyVideos),
+  parallel(styles, scripts, copyLibs, copyCssLibs, copyFlags, images, components, copyVideos),
   injectFiles,
   replaceImageExtensions,
   replaceImageExtensionsInCSS,

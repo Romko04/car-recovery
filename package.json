@@ -33,5 +33,9 @@
     "lenis": "^1.2.3",
     "scrolltrigger": "^1.0.1",
     "swiper": "^11.2.5"
+  },
+  "dependencies": {
+    "imask": "^7.6.1",
+    "intl-tel-input": "^25.3.1"
   }
 }

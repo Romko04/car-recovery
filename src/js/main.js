@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
       this.initSwiper();
       this.initListeners();
       this.initObservers();
+      this.initPhoneMask();
     }
 
     initSwiper() {
@@ -137,6 +138,53 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } catch (error) {
         console.log(error);
+      }
+    }
+
+    initPhoneMask() {
+      try {
+        let input = document.querySelector(".form__input--phone");
+
+        if (!input) return;
+
+        // Ініціалізація intl-tel-input
+        let iti = window.intlTelInput(input, {
+          initialCountry: "ua",
+          separateDialCode: true,
+        });
+
+        let mask;
+
+        function updateMask() {
+          let itiUtils = window.intlTelInput.utils; // Отримуємо утиліти
+
+          let countryData = iti.getSelectedCountryData();
+          if (!countryData) return;
+
+          // Отримуємо приклад номера для країни
+          let exampleNumber = itiUtils.getExampleNumber(countryData.iso2, false, itiUtils.numberFormat.INTERNATIONAL);
+
+          let numberWithoutDialCode = exampleNumber.replace(new RegExp(`^\\+${countryData.dialCode}\\s*`), "");
+
+          // Створюємо маску для IMask
+          let maskPattern = numberWithoutDialCode
+            .replace(/\s+/g, "-") // Заміняємо пробіли на дефіси
+            .replace(/\d/g, "0");
+
+          if (mask) mask.destroy(); // Видаляємо стару маску
+          mask = window.IMask(input, {
+            mask: maskPattern,
+            lazy: false,
+          }); // Створюємо нову маску
+        }
+
+        // Оновлюємо маску при зміні країни
+        input.addEventListener("countrychange", updateMask);
+
+        // Викликаємо після ініціалізації
+        setTimeout(updateMask, 500);
+      } catch (error) {
+        console.error("Помилка в телефонній масці:", error);
       }
     }
 
