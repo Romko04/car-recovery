@@ -141,16 +141,21 @@ function eazycarsolutions_scripts() {
     // Підключення стилю з папки assets
     wp_enqueue_style( 'swiper-style', get_template_directory_uri() . '/assets/css/libs/swiper-bundle.min.css', array(), _S_VERSION );
 
-    wp_enqueue_style( 'eazycarsolutions-style', get_template_directory_uri() . '/assets/css/style.css', array('swiper-style'), _S_VERSION );
+    wp_enqueue_style( 'int-tel', get_template_directory_uri() . '/assets/css/libs/intlTelInput.min.css', array(), _S_VERSION );
+
+    wp_enqueue_style( 'eazycarsolutions-style', get_template_directory_uri() . '/assets/css/style.css', array('swiper-style', 'int-tel'), _S_VERSION );
 
 
-    // Підключення стилю для swiper з папки assets
-
-    // Підключення основного скрипту з папки assets
-    wp_enqueue_script( 'eazycarsolutions-main', get_template_directory_uri() . '/assets/js/main.js', array('swiper-script'), _S_VERSION, true );
 
     // Підключення скрипту для swiper з папки assets
     wp_enqueue_script( 'swiper-script', get_template_directory_uri() . '/assets/js/libs/swiper-bundle.min.js', array(), _S_VERSION, true );
+
+	wp_enqueue_script( 'int-tel-script', get_template_directory_uri() . '/assets/js/libs/intlTelInputWithUtils.min.js', array(), _S_VERSION, true );
+
+	wp_enqueue_script( 'mask-tel-script', get_template_directory_uri() . '/assets/js/libs/imask.min.js', array(), _S_VERSION, true );
+
+
+    wp_enqueue_script( 'eazycarsolutions-main', get_template_directory_uri() . '/assets/js/main.js', array('swiper-script', 'int-tel-script', 'mask-tel-script'), _S_VERSION, true );
 }
 add_action( 'wp_enqueue_scripts', 'eazycarsolutions_scripts' );
 
@@ -270,3 +275,24 @@ function eazycar_custom_meta_tags() {
 
 // Додаємо екшн хук для вставки тайтлів та дескрипшінів в <head>
 add_action( 'wp_head', 'eazycar_custom_meta_tags', 1 );
+
+
+// Добавляем валидацию в Contact Form 7
+add_filter( 'wpcf7_validate', 'custom_cf7_validation', 10, 2 );
+function custom_cf7_validation( $result, $tags ) {
+    $post_data = $_POST;
+    
+    // Имя поля, к которому вы хотите применить валидацию
+    $your_field_name = 'form-name'; // Замените на имя вашего поля
+    
+    if ( isset( $post_data[$your_field_name] ) ) {
+        // Добавьте собственную логику валидации сюда
+        $field_value = $post_data[$your_field_name];
+        
+        // Проверка на наличие цифр в поле
+        if ( preg_match( '/\d/', $field_value ) ) {
+            $result->invalidate( $tags[0], 'Поле "Ваше ім\'я" не може містити цифри.' );
+        }
+    }
+    return $result;
+}
