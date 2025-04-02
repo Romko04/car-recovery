@@ -8,6 +8,7 @@ Container::make('post_meta', 'Настройки')
 ->show_on_template('tmp-home.php')
     ->add_tab(__('Баннер'), array(
         Field::make('text', 'banner_title', __('Заголовок банера')),
+        Field::make('text', 'btn_title', __('Текст кнопки')),
         Field::make('rich_text', 'banner_text', __('Текст банера')),
         Field::make('image', 'banner_image', __('Зображення банера'))
         ->set_value_type('url'),
@@ -29,8 +30,29 @@ Container::make('post_meta', 'Настройки')
         Field::make('text', 'issue_section_title', __('Заголовок секції')), // Заголовок секції
         Field::make('complex', 'issues_list', __('Питання, які вирішуємо'))
             ->add_fields(array(
+                Field::make('select', 'issue_media_type', __('Тип медіа'))
+                    ->add_options(array(
+                        'image' => __('Зображення'),
+                        'video' => __('Відео'),
+                    )),
                 Field::make('image', 'issue_image', __('Зображення'))
-                    ->set_value_type('url'),
+                    ->set_value_type('url')
+                    ->set_conditional_logic(array(
+                        array(
+                            'field' => 'issue_media_type',
+                            'value' => 'image',
+                            'compare' => '=',
+                        ),
+                    )),
+                Field::make('file', 'issue_video', __('Відео'))
+                    ->set_type('video')
+                    ->set_conditional_logic(array(
+                        array(
+                            'field' => 'issue_media_type',
+                            'value' => 'video',
+                            'compare' => '=',
+                        ),
+                    )),
                 Field::make('text', 'issue_title', __('Заголовок')),
             )),
     ))

@@ -14,7 +14,8 @@ $banner_image = carbon_get_the_post_meta('banner_image');
             </div>
             <div class="hero__bottom">
                 <div class="hero__btn-wrapper">
-                    <a class="anchor hero__btn btn" href="#contact-form">Запис на консультацію</a>
+                    <a class="anchor hero__btn btn"
+                        href="#contact-form"><?php echo esc_html(carbon_get_the_post_meta('btn_title')); ?></a>
                 </div>
                 <div class="hero__social">
                     <ul class="hero__social-list">
@@ -237,15 +238,29 @@ if ($team_members):
             $issues = carbon_get_the_post_meta( 'issues_list' );
             if ( ! empty( $issues ) ) :
                 foreach ( $issues as $issue ) :
+                    $media_type = esc_html( $issue['issue_media_type'] );
                     $image_url = esc_url( $issue['issue_image'] );
                     $title = esc_html( $issue['issue_title'] );
+                    $issues_video_id = $issue['issue_video'];
+                    $video_url = $issues_video_id ? wp_get_attachment_url($issues_video_id) : '';
             ?>
             <div class="issues__item">
                 <div class="issues__img-wrapper">
-                    <img src="<?php echo $image_url; ?>" alt="<?php echo $title; ?>" class="issues__image" />
-                    <p class="issues__text"><?php echo $title; ?></p>
+                    <?php if ($media_type === 'image' && !empty($image_url)): 
+
+                    ?>
+                    <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($title); ?>"
+                        class="issues__image" />
+                    <?php elseif ($media_type === 'video' && !empty($video_url)): ?>
+                    <video loop autoplay muted class="issues__video">
+                        <source src="<?php echo esc_url($video_url); ?>" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <?php endif; ?>
+                    <p class="issues__text"><?php echo esc_html($title); ?></p>
                 </div>
             </div>
+
             <?php 
                 endforeach;
             endif;

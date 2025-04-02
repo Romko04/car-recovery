@@ -122,6 +122,7 @@ a {
 body {
   line-height: 1;
   background-color: #f6faff;
+  height: 100vh;
 }
 .body--lock {
   overflow: hidden;
@@ -508,6 +509,8 @@ span.values__item-text-bold {
 }
 .issues__img-wrapper {
   position: relative;
+  background: black;
+  height: 32rem;
 }
 .issues__img-wrapper::after {
   content: "";
@@ -517,6 +520,7 @@ span.values__item-text-bold {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.7);
+  border-radius: 2rem;
 }
 .issues__img-wrapper img {
   width: 100%;
@@ -638,6 +642,7 @@ span.values__item-text-bold {
 }
 .partners__image {
   max-height: 8rem;
+  max-height: 100%;
 }
 .slide-content--partners {
   display: flex;
@@ -666,6 +671,7 @@ span.values__item-text-bold {
   overflow: hidden;
   width: 100%;
   height: 100%;
+  max-height: 47.5rem;
 }
 .portfolio__image {
   width: 100%;
@@ -1425,7 +1431,14 @@ li.current-menu-item a {
 .promo__container-wrapper {
   overflow: visible;
 }
+.issues__video {
+  width: 100%;
+  height: 100%;
+}
 @media (max-width: 991.98px) {
+  .issues__img-wrapper {
+    height: 16.5rem;
+  }
   .iti .iti__selected-dial-code {
     color: #fff;
     font-size: 1.2rem;
@@ -1732,6 +1745,7 @@ li.current-menu-item a {
   }
   .portfolio__img-wrapper {
     border: 0.1rem solid #d1d5db;
+    max-height: 21.1rem;
   }
   .promo__container-wrapper {
     position: relative;
